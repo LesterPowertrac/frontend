@@ -18,6 +18,8 @@ import ViewSupplier from "../Pages/ViewSupplier";
 import ViewCategories from "../Pages/ViewCategories";
 import CategoriesEdit from "../Pages/CategoriesEdit";
 import Incentives from "../Pages/Incentives";
+import Incentives_Technician from '../Pages/Incentive_Technician';
+import Incentive_Advisor from '../Pages/Incentive_Advisor';
 
 const Router = createHashRouter([
     {
@@ -97,9 +99,13 @@ const Router = createHashRouter([
                 element: <ViewEmployee />                
             }, 
             {
-                path: '/incentives',
-                element: <Incentives />                
-            }   
+                path: '/incentive_technician',
+                element: <Incentives_Technician />                
+            },
+            {
+                path: '/incentive_advisor',
+                element: <Incentive_Advisor/>
+            }
         ],
     },
     {
