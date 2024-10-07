@@ -17,7 +17,6 @@ import SupplierEdit from "../Pages/SupplierEdit";
 import ViewSupplier from "../Pages/ViewSupplier";
 import ViewCategories from "../Pages/ViewCategories";
 import CategoriesEdit from "../Pages/CategoriesEdit";
-import Incentives from "../Pages/Incentives";
 import Incentives_Technician from '../Pages/Incentive_Technician';
 import Incentive_Advisor from '../Pages/Incentive_Advisor';
 
