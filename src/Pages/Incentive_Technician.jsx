@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import config from '../api/config'
 import axios from 'axios';
+import Styles from '../css/Text.module.css'
 import {
           Breadcrumbs,
           Button, 
@@ -8,6 +9,7 @@ import {
           Paper,
           TextField,
           IconButton,
+          Autocomplete,
           Box
        } from '@mui/material'
 
@@ -18,8 +20,8 @@ import SearchIcon from '@mui/icons-material/Search';
 const Incentive_Technician = () => {
   const [roNumber, setRoNumber] = useState(''); // Hold RO number input
   const [customerData, setCustomerData] = useState(null); // Hold fetched customer data
-  const [loading, setLoading] = useState(false); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [options, setOptions] = useState([]);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   // API URL based on environment
   const getApiUrl = useCallback(() => {
@@ -41,7 +43,63 @@ const Incentive_Technician = () => {
     }
 };
 
+const [inputValue, setInputValue] = useState('');
+
+  // Fetch mechanics based on inputValue with debouncing
+  const fetchOptions = async () => {
+    if (inputValue.length > 0) {
+      try {
+        const response = await axios.get(`${apiUrl}/mechaniclist/${inputValue}`);
+      // Assuming response.data is an array of objects
+      const trimmedOptions = response.data.map(mechanic => ({
+        ...mechanic,
+        name: mechanic.MechanicName.trim() // Adjust 'name' to the correct property
+      }));
+      setOptions(trimmedOptions);
+      } catch (error) {
+        // Suppress 404 error logs
+        if (error.response) {
+          if (error.response.status === 404) {
+            // Display a user-friendly message in the UI
+            alert(`Mechanic "${inputValue}" not found.`);
+          } else {
+            // Log error only in development environment
+            if (process.env.NODE_ENV !== 'production') {
+              console.error("Error fetching mechanics:", error.response.data);
+            }
+          }
+        } else {
+          console.error("Network error or no response:", error);
+        }
+        setOptions([]); // Clear options if there's an error
+      }
+    } else {
+      setOptions([]); // Clear options if input is empty
+    }
+  };
   
+
+  useEffect(() => {
+    // Clear previous timeout
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    // Set new timeout
+    const timeout = setTimeout(() => {
+      fetchOptions();
+    }, 300); // Adjust the debounce time as necessary
+
+    setDebounceTimeout(timeout);
+    
+    return () => clearTimeout(timeout); // Cleanup on unmount
+  }, [inputValue]);
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+
   return (
     <div>
     <Grid container spacing={2} alignItems="center">
@@ -50,6 +108,7 @@ const Incentive_Technician = () => {
         <Button 
           variant='contained' 
           sx={{ display: 'flex' }}
+          onClick={handlePrint}
         >
           Print
         </Button>
@@ -99,21 +158,34 @@ const Incentive_Technician = () => {
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
             {customerData ? (
-                <span>Customer Name: {customerData.Companyname || ''}</span>
+                <span >Customer Name: <br/>
+                  <span className={Styles.TextBlue}>{customerData.Companyname || ''}</span>
+                </span>
               ) : (
                 <span>Customer Name:{''}</span>
               )}
             </td>
+            
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
             {customerData ? (
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Manufacturer/Model: {customerData.Model || ''}</td>
+              <span> Manufacturer/Model: <br/>
+                <span className={Styles.TextBlue}>{customerData.Model || ''}</span>
+              </span>
              ) : (
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Manufacturer/Model: {''}</td>
+              <span>Customer Name:{''}</span>
              )}
-             {customerData ? (
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Chassis Number: {customerData.Vinchassisno || ''}</td>
-             ) : (
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Chassis Number: {''}</td>
+             </td>
+             
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+            {customerData ? (
+            <span> Manufacturer/Model: <br/>
+              <span className={Styles.TextBlue}>{customerData.Model || ''}</span>
+            </span>
+            ) : (
+              <span>Chassis Number: {''}</span>
             )}
+            </td>
+
           </tr>
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Status1:(Complete/Pending/Canceled)</td>
@@ -121,9 +193,22 @@ const Incentive_Technician = () => {
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Status3:(Complete/Pending/Canceled)</td>
           </tr>
           <tr>
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Request:</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+              {customerData ? (
+              <span>Service Request: <br/>
+                <span className={Styles.TextBlue}>{customerData.Actualrepairdone || ''}</span>
+              </span>
+              ) : (
+                <span>Chassis Number: {''}</span>
+              )}
+            </td>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}></td>
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Date of Service:</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+              Date of Service: <br/>
+              <span className={Styles.InputMiddle}>
+                <input type="date"/>
+              </span>
+            </td>
           </tr>
         </tbody>
     
@@ -163,10 +248,66 @@ const Incentive_Technician = () => {
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date12'>Date4:</label><input style={{width: '65%', marginLeft: '0.5rem'}} type="date" id="date12"/></td>
           </tr>
           <tr>
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'4'}>Technician Name:<br/>{}</td>
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Technician Name:<br/>{}</td>
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Technician Name:<br/>{}</td>
-            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Technician Name:<br/>{}</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'4'}>Technician Name:<br/> 
+              <Autocomplete
+                options={options}
+                getOptionLabel={(option) => option.MechanicName ? option.MechanicName.trim() : ''} 
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.MechanicID}>
+                    {option.MechanicName ? option.MechanicName.trim() : ''} 
+                  </li>
+                )}
+                renderInput={(params) => <TextField {...params} size='small' variant="outlined" />}
+              />
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Technician Name:<br/>
+            <Autocomplete
+                options={options}
+                getOptionLabel={(option) => option.MechanicName}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.MechanicID}> {/* Use MechanicID for the key */}
+                    {option.MechanicName}
+                  </li>
+                )}
+                renderInput={(params) => <TextField {...params} size='small' variant="outlined" />}
+              />
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Technician Name:<br/>
+            <Autocomplete
+                options={options}
+                getOptionLabel={(option) => option.MechanicName}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.MechanicID}> {/* Use MechanicID for the key */}
+                    {option.MechanicName}
+                  </li>
+                )}
+                renderInput={(params) => <TextField {...params} size='small' variant="outlined" />}
+              />
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Technician Name:<br/>
+            <Autocomplete
+                options={options}
+                getOptionLabel={(option) => option.MechanicName}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                renderOption={(props, option) => (
+                  <li {...props} key={option.MechanicID}> {/* Use MechanicID for the key */}
+                    {option.MechanicName}
+                  </li>
+                )}
+                renderInput={(params) => <TextField {...params} size='small' variant="outlined" />}
+              />
+            </td>
           </tr>
           <tr >
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd', width: '5rem'}} colSpan={'2'}>RATING:<br/>Check the ff: Pass/Fail or Na(Not Applicable)</td>
@@ -334,10 +475,14 @@ const Incentive_Technician = () => {
           <tbody>
 
             <tr>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>:</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+                <TextField sx={{width: '100%'}} size="small" variant="outlined"/>
+              </td>
             </tr>
             <tr>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>:</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+                <TextField sx={{width: '100%'}} size="small" variant="outlined"/>
+              </td>
             </tr>
           </tbody>
         </table>

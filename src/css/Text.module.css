@@ -1,0 +1,9 @@
+.TextBlue{
+    color: blue;
+}
+
+.InputMiddle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
