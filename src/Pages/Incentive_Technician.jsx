@@ -54,7 +54,11 @@ const [inputValue, setInputValue] = useState('');
   const fetchOptions = async () => {
     if (inputValue.length > 0) {
       try {
-        const response = await axios.get(`${apiUrl}/mechaniclist/${inputValue}`);
+        const response = await axios.get(`${apiUrl}/mechaniclist/${inputValue}`, {
+          headers: { 
+            'ngrok-skip-browser-warning': true
+          }
+        });
       // Assuming response.data is an array of objects
       const trimmedOptions = response.data.map(mechanic => ({
         ...mechanic,
