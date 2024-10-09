@@ -16,6 +16,7 @@ import {
 import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid2'
 import SearchIcon from '@mui/icons-material/Search';
+import PDFExportButton from '../components/PdfButton';
 
 const Incentive_Technician = () => {
   const [roNumber, setRoNumber] = useState(''); // Hold RO number input
@@ -95,23 +96,25 @@ const [inputValue, setInputValue] = useState('');
     return () => clearTimeout(timeout); // Cleanup on unmount
   }, [inputValue]);
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-
   return (
     <div>
     <Grid container spacing={2} alignItems="center">
       {/* Left side: Export Button */}
       <Grid  xs={12} sm={6} md={4} sx={{ flexGrow: 1 }}>
-        <Button 
+
+        <PDFExportButton
+        targetIds={['printable-area-1', 'printable-area-2', 'printable-area-3', 'printable-area-4', 'printable-area-5', 
+                    'printable-area-6', 'printable-area-7', 'printable-area-8', 'printable-area-9'
+                  ]} 
+        filename="combined_report.pdf" sx={{ display: 'flex' }} 
+        />
+        {/* <Button 
           variant='contained' 
           sx={{ display: 'flex' }}
           onClick={handlePrint}
         >
           Print
-        </Button>
+        </Button> */}
       </Grid>
 
       {/* Middle: Error Alert (if any) */}
@@ -120,15 +123,15 @@ const [inputValue, setInputValue] = useState('');
       </Grid>
 
       {/* Right side: Breadcrumbs */}
-      <Grid   xs={12} sm={12} md={4} display="flex" justifyContent="flex-end">
+      <Grid  xs={12} sm={12} md={4} display="flex" justifyContent="flex-end">
         <Breadcrumbs aria-label="breadcrumb">
           <Link to='/incentives'>Dashboard</Link>
           <Link to='/incentives'>Incentives Technician</Link>
         </Breadcrumbs>
-        </Grid>
+      </Grid>
       </Grid>
       <br/> 
-      <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between" id="printable-area-2" >
         <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
           <h4><b>INCENTIVE & EVALUATION FORM (SERVICE TECHNICIAN)</b></h4>
         </Grid>
@@ -151,10 +154,12 @@ const [inputValue, setInputValue] = useState('');
         </Grid>
       </Grid>
 
+    
+
       <TableContainer component={Paper} >
+      
       <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}} >
-     
-        <tbody>
+        <tbody id="printable-area-3">
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
             {customerData ? (
@@ -172,7 +177,7 @@ const [inputValue, setInputValue] = useState('');
                 <span className={Styles.TextBlue}>{customerData.Model || ''}</span>
               </span>
              ) : (
-              <span>Customer Name:{''}</span>
+              <span>Manufacturer/Model:{''}</span>
              )}
              </td>
              
@@ -199,7 +204,7 @@ const [inputValue, setInputValue] = useState('');
                 <span className={Styles.TextBlue}>{customerData.Actualrepairdone || ''}</span>
               </span>
               ) : (
-                <span>Chassis Number: {''}</span>
+                <span>Service Request: {''}</span>
               )}
             </td>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}></td>
@@ -211,16 +216,14 @@ const [inputValue, setInputValue] = useState('');
             </td>
           </tr>
         </tbody>
-    
       </table>
       </TableContainer>
-
 
       <br />
       <TableContainer component={Paper}>
      
       <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}} >
-        <tbody>
+        <tbody id="printable-area-4">
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd', width: '31%'}} rowSpan={'4'}>
               <span style={{textDecorationLine: 'underline'}}>Quarterly Cash Incentive Program Mechanic:<br/>
@@ -442,7 +445,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
-          <thead>
+          <thead id="printable-area-3">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}></th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Labor Sales</th>
@@ -467,13 +470,13 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
-          <thead>
+          <thead id="printable-area-5">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Special Comments:</th>
             </tr>
           </thead>
-          <tbody>
-
+          
+          <tbody id="printable-area-6">
             <tr>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
                 <TextField sx={{width: '100%'}} size="small" variant="outlined"/>
@@ -488,11 +491,13 @@ const [inputValue, setInputValue] = useState('');
         </table>
  
       </TableContainer>
+
       <br />
+
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}}>
-          <thead>
+          <thead id="printable-area-7">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Advisor</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Asst. Service Manager</th>
@@ -503,9 +508,19 @@ const [inputValue, setInputValue] = useState('');
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>President</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="printable-area-8">
             <tr>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>{}</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+              {customerData ? (
+                <span className={Styles.TextBlue}>
+                  {customerData.Serviceentry
+                      ? customerData.Serviceentry.charAt(0).toUpperCase() + customerData.Serviceentry.slice(1)
+                      : ''}
+                  </span>
+                ) : (
+                  <span>{''}</span>
+                )}
+              </td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Charlie</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Vivian</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Rhea</td>
@@ -521,7 +536,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
-          <tbody>
+          <tbody id="printable-area-9">
             <tr>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Control Number:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Process By:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>

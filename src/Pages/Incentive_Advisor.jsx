@@ -1,29 +1,119 @@
-import React, { useState } from 'react';
-// import config from '../api/config';
-// import axios from 'axios';
-import { 
+import React, { useState, useEffect, useCallback } from 'react';
+import config from '../api/config'
+import axios from 'axios';
+import Styles from '../css/Text.module.css'
+import {
           Breadcrumbs,
-          Button,
           TableContainer,
-          Paper
+          Paper,
+          TextField,
+          IconButton,
+          Box
        } from '@mui/material'
 
 import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid2'
+import SearchIcon from '@mui/icons-material/Search';
+import PDFExportButton from '../components/PdfButton';
 
-const Incentive_Advisor = () => {
+const Incentive_Technician = () => {
+  const [roNumber, setRoNumber] = useState(''); // Hold RO number input
+  const [customerData, setCustomerData] = useState(null); // Hold fetched customer data
+  const [options, setOptions] = useState([]);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+
+
+  // API URL based on environment
+  const getApiUrl = useCallback(() => {
+    return window.location.hostname === 'localhost'
+      ? config.api.local
+      : config.api.remote;
+  }, []);
+
+  const apiUrl = getApiUrl();
+
+  const handleSearch = async (event) => {
+    if (event.key === 'Enter') {
+        try {
+            const response = await axios.get(`${apiUrl}/customer/${roNumber}`);
+            setCustomerData(response.data);
+        } catch (error) {
+            console.error('Error fetching customer data:', error);
+        }
+    }
+};
+
+const [inputValue, setInputValue] = useState('');
+
+  // Fetch mechanics based on inputValue with debouncing
+  const fetchOptions = async () => {
+    if (inputValue.length > 0) {
+      try {
+        const response = await axios.get(`${apiUrl}/mechaniclist/${inputValue}`);
+      // Assuming response.data is an array of objects
+      const trimmedOptions = response.data.map(mechanic => ({
+        ...mechanic,
+        name: mechanic.MechanicName.trim() // Adjust 'name' to the correct property
+      }));
+      setOptions(trimmedOptions);
+      } catch (error) {
+        // Suppress 404 error logs
+        if (error.response) {
+          if (error.response.status === 404) {
+            // Display a user-friendly message in the UI
+            alert(`Mechanic "${inputValue}" not found.`);
+          } else {
+            // Log error only in development environment
+            if (process.env.NODE_ENV !== 'production') {
+              console.error("Error fetching mechanics:", error.response.data);
+            }
+          }
+        } else {
+          console.error("Network error or no response:", error);
+        }
+        setOptions([]); // Clear options if there's an error
+      }
+    } else {
+      setOptions([]); // Clear options if input is empty
+    }
+  };
+  
+
+  useEffect(() => {
+    // Clear previous timeout
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+
+    // Set new timeout
+    const timeout = setTimeout(() => {
+      fetchOptions();
+    }, 300); // Adjust the debounce time as necessary
+
+    setDebounceTimeout(timeout);
+    
+    return () => clearTimeout(timeout); // Cleanup on unmount
+  }, [inputValue]);
 
   return (
     <div>
     <Grid container spacing={2} alignItems="center">
       {/* Left side: Export Button */}
       <Grid  xs={12} sm={6} md={4} sx={{ flexGrow: 1 }}>
-        <Button 
+
+        <PDFExportButton
+        targetIds={['printable-area-1', 'printable-area-2', 'printable-area-3', 'printable-area-4', 'printable-area-5', 
+                    'printable-area-6', 'printable-area-7', 'printable-area-8', 'printable-area-9'
+                  ]} 
+        filename="combined_report.pdf" sx={{ display: 'flex' }} 
+        />
+        {/* <Button 
           variant='contained' 
           sx={{ display: 'flex' }}
+          onClick={handlePrint}
         >
           Print
-        </Button>
+        </Button> */}
       </Grid>
 
       {/* Middle: Error Alert (if any) */}
@@ -32,43 +122,127 @@ const Incentive_Advisor = () => {
       </Grid>
 
       {/* Right side: Breadcrumbs */}
-      <Grid   xs={12} sm={12} md={4} display="flex" justifyContent="flex-end">
+      <Grid  xs={12} sm={12} md={4} display="flex" justifyContent="flex-end">
         <Breadcrumbs aria-label="breadcrumb">
           <Link to='/incentives'>Dashboard</Link>
-          <Link to='/incentives'>Incentives Advisor</Link>
+          <Link to='/incentives'>Incentives Technician</Link>
         </Breadcrumbs>
-        </Grid>
+      </Grid>
       </Grid>
       <br/> 
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between" id="printable-area-2" >
+        <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
+          <h4><b>INCENTIVE & EVALUATION FORM (SERVICE ADVISOR)</b></h4>
+        </Grid>
+        <Grid  xs={12} sm={4} sx={{ display: 'block', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <Box display="flex" alignItems="center">
+            <TextField
+              id="RO number"
+              label="RO number"
+              variant="outlined"
+              size="small"
+              sx={{ width: '100%' }} // Ensures full-width in responsive layouts
+              value={roNumber}
+              onKeyDown={handleSearch}
+              onChange={(e) => setRoNumber(e.target.value)}
+            />
+            <IconButton color="primary" variant="contained"  onClick={handleSearch} aria-label="search">
+              <SearchIcon/>
+            </IconButton>
+          </Box>
+        </Grid>
+      </Grid>
+
+    
+
+      <TableContainer component={Paper} >
       
-      <h4><b>INCENTIVE & EVALUATION FORM(SERVICE ADVISOR)</b></h4>
-      <TableContainer component={Paper}>
-      <table style={{width: '100%', border:' 1px solid #dddddd'}} >
-        <tbody>
+      <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}} >
+        <tbody id="printable-area-3">
           <tr>
-            <td style={{border:' 1px solid #dddddd'}}>Customer Name:</td>
-            <td style={{border:' 1px solid #dddddd'}}>Manufacturer/Model: </td>
-            <td style={{border:' 1px solid #dddddd'}}>Chassis Number:</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+            {customerData ? (
+                <span >Customer Name: <br/>
+                  <span className={Styles.TextBlue}>{customerData.Companyname || ''}</span>
+                </span>
+              ) : (
+                <span>Customer Name:{''}</span>
+              )}
+            </td>
+            
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+            {customerData ? (
+              <span>Manufacturer/Model: <br/>
+                <span className={Styles.TextBlue}>{customerData.Model || ''}</span>
+              </span>
+             ) : (
+              <span>Manufacturer/Model:{''}</span>
+             )}
+             </td>
+             
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+            {customerData ? (
+            <span> Chassis Number: <br/>
+              <span className={Styles.TextBlue}>{customerData.Model || ''}</span>
+            </span>
+            ) : (
+              <span>Chassis Number: {''}</span>
+            )}
+            </td>
+
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}}>Service Status1:(Complete/Pending/Canceled)</td>
-            <td style={{border:' 1px solid #dddddd'}}>Service Status2:(Complete/Pending/Canceled)</td>
-            <td style={{border:' 1px solid #dddddd'}}>Service Status3:(Complete/Pending/Canceled)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Status: (Complete/Pending/Canceled)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+              <span>Service Technicians:</span>
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+            {customerData ? (
+              <span>Location: <br/>
+                <span className={Styles.TextBlue}>{customerData.Address || ''}</span>
+              </span>
+              ) : (
+                <span>Location: {''}</span>
+              )}
+            </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}}>Service Request:</td>
-            <td style={{border:' 1px solid #dddddd'}}></td>
-            <td style={{border:' 1px solid #dddddd'}}>Date of Service:</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+              {customerData ? (
+              <span>R.O Concern: <br/>
+                <span className={Styles.TextBlue}>{customerData.Remarksnote || ''}</span>
+              </span>
+              ) : (
+                <span>R.O Concern: {''}</span>
+              )}
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+            {customerData ? (
+              <span>Actual Done: <br/>
+                <span className={Styles.TextBlue}>{customerData.Actualrepairdone || ''}</span>
+              </span>
+              ) : (
+                <span>Actual Done: {''}</span>
+              )}
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+              Date/Remarks: <br/>
+              <span className={Styles.InputMiddle}>
+                <input type="date"/>
+              </span>
+            </td>
           </tr>
         </tbody>
       </table>
       </TableContainer>
+
       <br />
       <TableContainer component={Paper}>
-      <table style={{width: '100%', border:' 1px solid #dddddd'}} >
-        <tbody>
+     
+      <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}} >
+        <tbody id="printable-area-4">
           <tr>
-            <td style={{border:' 1px solid #dddddd', width: '31%'}} rowSpan={'4'}>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', width: '31%'}} rowSpan={'4'}>
               <span style={{textDecorationLine: 'underline'}}>Quarterly Cash Incentive Program Mechanic:<br/>
               X Rating</span> = Automatic disqualification to recieve 
               cash incentive share on the R.O, <br/>
@@ -76,233 +250,295 @@ const Incentive_Advisor = () => {
               Disqualification from PTI Quarterly Cash Incentive
               Program
             </td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'4'}>Customer Relations Officer Rating</td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}>Service manager Rating</td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}>Parts Manager Rating</td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}>Warranty Officer Rating</td>
+            <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'4'}><label >Customer Relations Officer Rating</label></th>
+            <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Service Manager Rating</label></th>
+            <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Parts Manager Rating</label></th>
+            <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Warranty Officer Rating</label></th>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'4'}>Name: ANGEL/SHIELA</td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}>Name: Charlie</td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}>Name: VIVIAN</td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}>Name:</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'4'}><label >Name:</label><TextField size="small" variant="outlined" value='ANGEL/SHIELA'/> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label >Name:</label><TextField  size="small" variant="outlined" value='CHARLIE'/> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label >Name:</label><TextField  size="small" variant="outlined" value='VIVIAN'/> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label >Name:</label><TextField size="small" variant="outlined" value=''/> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'4'}><label htmlFor='date9'>Date: </label><input style={{width: '65%'}} type="date" id="date9"/></td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date10'>Date: </label><input style={{width: '65%'}} type="date" id="date10"/></td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date11'>Date: </label><input style={{width: '65%'}} type="date" id="date11"/></td>
-            <td style={{border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date12'>Date: </label><input style={{width: '65%'}} type="date" id="date12"/></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'4'}><label >Date:</label><input style={{width: '65%', marginLeft: '0.5rem'}} type="date" id="date9"/></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date10'>Date:</label><input style={{width: '65%', marginLeft: '0.5rem'}} type="date" id="date10"/></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date11'>Date:</label><input style={{width: '65%', marginLeft: '0.5rem'}} type="date" id="date11"/></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date12'>Date:</label><input style={{width: '65%', marginLeft: '0.5rem'}} type="date" id="date12"/></td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} colSpan={'4'}>Service Advisor Name:</td>
-            <td style={{border:' 1px solid #dddddd'}} colSpan={'3'}>Service Advisor Name:</td>
-            <td style={{border:' 1px solid #dddddd'}} colSpan={'3'}>Service Advisor Name:</td>
-            <td style={{border:' 1px solid #dddddd'}} colSpan={'3'}>Service Advisor Name:</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'4'}>Service Advisor Name:<br/> 
+            {customerData ? (
+                <span className={Styles.TextBlue}>
+                  {customerData.Serviceentry
+                      ? customerData.Serviceentry.charAt(0).toUpperCase() + customerData.Serviceentry.slice(1)
+                      : ''}
+                  </span>
+                ) : (
+                  <span>{''}</span>
+                )}
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Service Advisor Name:<br/>
+            {customerData ? (
+                <span className={Styles.TextBlue}>
+                  {customerData.Serviceentry
+                      ? customerData.Serviceentry.charAt(0).toUpperCase() + customerData.Serviceentry.slice(1)
+                      : ''}
+                  </span>
+                ) : (
+                  <span>{''}</span>
+                )}
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Service Advisor Name:<br/>
+            {customerData ? (
+                <span className={Styles.TextBlue}>
+                  {customerData.Serviceentry
+                      ? customerData.Serviceentry.charAt(0).toUpperCase() + customerData.Serviceentry.slice(1)
+                      : ''}
+                  </span>
+                ) : (
+                  <span>{''}</span>
+                )}
+            </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Service Advisor Name:<br/>
+            {customerData ? (
+                <span className={Styles.TextBlue}>
+                  {customerData.Serviceentry
+                      ? customerData.Serviceentry.charAt(0).toUpperCase() + customerData.Serviceentry.slice(1)
+                      : ''}
+                  </span>
+                ) : (
+                  <span>{''}</span>
+                )}
+            </td>
           </tr>
           <tr >
-            <td style={{border:' 1px solid #dddddd', width: '5rem'}} colSpan={'2'}>RATING:<br/>Check the ff: Pass/Fail or Na(Not Applicable)</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS FAIL NA</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS FAIL NA</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS FAIL NA</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS FAIL NA</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', width: '5rem'}} colSpan={'2'}>RATING:<br/>Check the ff: Pass/Fail or Na(Not Applicable)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS | FAIL | NA</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS | FAIL | NA</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS | FAIL | NA</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}>PASS | FAIL | NA</td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} >Attendance</td>
-            <td style={{border:' 1px solid #dddddd'}} >X/✔</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >Attendance</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >X/✔</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} >Service Update (Communication)</td>
-            <td style={{border:' 1px solid #dddddd'}} >X/✔</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >Service Update (Communication)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >X/✔</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} >Reports (Completed/Submitted)</td>
-            <td style={{border:' 1px solid #dddddd'}} >X/✔</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >Reports (Completed/Submitted)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >X/✔</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} >Pictures (Repair/GPS pic.)</td>
-            <td style={{border:' 1px solid #dddddd'}} >X/✔</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >Pictures (Repair/GPS pic.)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >X/✔</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} >Parts (Returned-Used or Not)</td>
-            <td style={{border:' 1px solid #dddddd'}} >X/✔</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >Parts (Returned-Used or Not)</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >X/✔</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd'}} >Customer Survey</td>
-            <td style={{border:' 1px solid #dddddd'}} >X/✔</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >Customer Survey</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} >X/✔</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd', width: '2rem'}} colspan="2">R.O Submitted Date (updated): PASS/FAIL</td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', width: '2rem'}} colSpan="2">R.O Submitted Date (updated): PASS/FAIL</td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <input type="checkbox" /> </td>
           </tr>
           <tr>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colspan="2">CASH INCENTIVE SHARE </td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colspan="3"></td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colspan="3"></td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colspan="3"></td>
-            <td style={{border:' 1px solid #dddddd', textAlign: 'center'}} colspan="3"></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan="2">CASH INCENTIVE SHARE </td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan="3"></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan="3"></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan="3"></td>
+            <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan="3"></td>
           </tr>
         </tbody>
       </table>
+ 
       </TableContainer>
       <br />
       <TableContainer component={Paper}>
-        <table style={{width: '100%', border:' 1px solid #dddddd'}}>
+     
+        <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
+          <thead id="printable-area-3">
+            <tr>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}></th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Labor Sales</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Parts Sales</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Labor Warranty Sales</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Parts Warranty Sales</th>
+            </tr>
+          </thead>
           <tbody>
             <tr>
-              <td style={{border:' 1px solid #dddddd'}}></td>
-              <td style={{border:' 1px solid #dddddd'}}>Service Labor Sales</td>
-              <td style={{border:' 1px solid #dddddd'}}>Service Parts Sales</td>
-              <td style={{border:' 1px solid #dddddd'}}>Labor Warranty Sales</td>
-              <td style={{border:' 1px solid #dddddd'}}>Parts Warranty Sales</td>
-            </tr>
-            <tr>
-              <td style={{border:' 1px solid #dddddd'}}>GENERATED SALES</td>
-              <td style={{border:' 1px solid #dddddd'}}></td>
-              <td style={{border:' 1px solid #dddddd'}}></td>
-              <td style={{border:' 1px solid #dddddd'}}></td>
-              <td style={{border:' 1px solid #dddddd'}}></td>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>GENERATED SALES</th>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}><TextField size="small" variant="outlined"/></td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}><TextField size="small" variant="outlined"/></td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}><TextField size="small" variant="outlined"/></td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}><TextField size="small" variant="outlined"/></td>
             </tr>
           </tbody>
         </table>
+ 
       </TableContainer>
       <br />
       <TableContainer component={Paper}>
-        <table style={{width: '100%', border:' 1px solid #dddddd'}}>
-          <tbody>
+     
+        <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
+          <thead id="printable-area-5">
             <tr>
-              <td style={{border:' 1px solid #dddddd'}}>Special Comments:</td>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Special Comments:</th>
+            </tr>
+          </thead>
+          
+          <tbody id="printable-area-6">
+            <tr>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+                <TextField sx={{width: '100%'}} size="small" variant="outlined"/>
+              </td>
             </tr>
             <tr>
-              <td style={{border:' 1px solid #dddddd'}}>:</td>
-            </tr>
-            <tr>
-              <td style={{border:' 1px solid #dddddd'}}>:</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
+                <TextField sx={{width: '100%'}} size="small" variant="outlined"/>
+              </td>
             </tr>
           </tbody>
         </table>
+ 
+      </TableContainer>
+
+      <br />
+
+      <TableContainer component={Paper}>
+     
+        <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}}>
+          <thead id="printable-area-7">
+            <tr>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Service Verifier</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Asst. Service Manager</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Parts Manager</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Service HR</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Warranty Officer</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Accounting</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>President</th>
+            </tr>
+          </thead>
+          <tbody id="printable-area-8">
+            <tr>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Angel/Shiela</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Charlie</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Vivian</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Rhea</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Angel/Shiela</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Jeff</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Boss Lito</td>
+            </tr>
+          </tbody>
+        </table>
+ 
       </TableContainer>
       <br />
       <TableContainer component={Paper}>
-        <table style={{width: '100%', border:' 1px solid #dddddd'}}>
-          <tbody>
+     
+        <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
+          <tbody id="printable-area-9">
             <tr>
-              <td style={{border:' 1px solid #dddddd'}}>Service Advisor</td>
-              <td style={{border:' 1px solid #dddddd'}}>Asst. Service Manager</td>
-              <td style={{border:' 1px solid #dddddd'}}>Parts Manager</td>
-              <td style={{border:' 1px solid #dddddd'}}>Service HR</td>
-              <td style={{border:' 1px solid #dddddd'}}>Service Verifier</td>
-              <td style={{border:' 1px solid #dddddd'}}>Accounting</td>
-              <td style={{border:' 1px solid #dddddd'}}>President</td>
-            </tr>
-            <tr>
-              <td style={{border:' 1px solid #dddddd'}}>Angel/Shiela</td>
-              <td style={{border:' 1px solid #dddddd'}}>Charlie</td>
-              <td style={{border:' 1px solid #dddddd'}}>Vivian</td>
-              <td style={{border:' 1px solid #dddddd'}}>Rhea</td>
-              <td style={{border:' 1px solid #dddddd'}}>:</td>
-              <td style={{border:' 1px solid #dddddd'}}>Jeff</td>
-              <td style={{border:' 1px solid #dddddd'}}>Boss Lito</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Control Number:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Process By:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Signature & Date:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>
             </tr>
           </tbody>
         </table>
-      </TableContainer>
-      <br />
-      <TableContainer component={Paper}>
-        <table style={{width: '100%', border:' 1px solid #dddddd'}}>
-          <tbody>
-            <tr>
-              <td style={{border:' 1px solid #dddddd'}}>Control Number:</td>
-              <td style={{border:' 1px solid #dddddd'}}>Process By:</td>
-              <td style={{border:' 1px solid #dddddd'}}>Signature & Date:</td>
-            </tr>
-          </tbody>
-        </table>
+ 
       </TableContainer>
     </div>
   )
 }
 
-export default Incentive_Advisor
+export default Incentive_Technician
