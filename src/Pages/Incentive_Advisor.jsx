@@ -34,7 +34,11 @@ const Incentive_Technician = () => {
 
   const handleSearch = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/customer/${roNumber}`);
+      const response = await axios.get(`${apiUrl}/customer/${roNumber}`, {
+        headers: { 
+          'ngrok-skip-browser-warning': true
+        }
+      });
       setCustomerData(response.data);
     } catch (error) {
       console.error('Error fetching customer data:', error);
