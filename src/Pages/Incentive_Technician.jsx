@@ -139,7 +139,8 @@ const [inputValue, setInputValue] = useState('');
       </Grid>
       </Grid>
       <br/> 
-      <Grid container spacing={2} alignItems="center" justifyContent="space-between" id="printable-area-2" >
+      <div id="printable-area-2"> 
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between">
         <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
           <h4><b>INCENTIVE & EVALUATION FORM (SERVICE TECHNICIAN)</b></h4>
         </Grid>
@@ -161,7 +162,7 @@ const [inputValue, setInputValue] = useState('');
           </Box>
         </Grid>
       </Grid>
-
+      </div>
     
 
       <TableContainer component={Paper} >

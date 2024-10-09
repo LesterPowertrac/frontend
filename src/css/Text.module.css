@@ -7,3 +7,18 @@
     justify-content: center;
     align-items: center;
 }
+
+.TextBlack{
+    color: black;
+}
+
+.TextCenterInput input{
+    text-align: center;
+}
+
+.FullCenter{
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    height: 100%; /* Ensures full height of the td */
+}

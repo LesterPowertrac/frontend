@@ -11,7 +11,7 @@ const PdfButton = ({ targetIds, filename }) => {
         for (let id of targetIds) {
           const input = document.getElementById(id);
           if (input) {
-            const canvas = await html2canvas(input);
+            const canvas = await html2canvas(input, { scale: 2 }); // Increased scale for better quality
             canvases.push(canvas);
           }
         }
@@ -26,7 +26,7 @@ const PdfButton = ({ targetIds, filename }) => {
             totalHeight += (canvas.height * imgWidth) / canvas.width;
           });
     
-          let currentHeight = 10;
+          let currentHeight = 5;
           canvases.forEach((canvas) => {
             const imgData = canvas.toDataURL('image/png');
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
@@ -34,11 +34,11 @@ const PdfButton = ({ targetIds, filename }) => {
             if (currentHeight + imgHeight > pdf.internal.pageSize.height) {
               // If it exceeds the page, create a new page
               pdf.addPage();
-              currentHeight = 10; // Reset position for new page
+              currentHeight = 5; // Reset position for new page
             }
     
-            pdf.addImage(imgData, 'PNG', 10, currentHeight, imgWidth, imgHeight);
-            currentHeight += imgHeight;
+            pdf.addImage(imgData, 'PNG', 10, currentHeight, imgWidth, imgHeight); // 10 to add a small margin
+            currentHeight += imgHeight + 10; // Add extra space between sections
           });
     
           pdf.save(filename);
@@ -51,6 +51,5 @@ const PdfButton = ({ targetIds, filename }) => {
         </Button>
       );
     };
-    
 
-export default PdfButton
+export default PdfButton;
