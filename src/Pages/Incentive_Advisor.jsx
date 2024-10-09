@@ -32,16 +32,22 @@ const Incentive_Technician = () => {
 
   const apiUrl = getApiUrl();
 
-  const handleSearch = async (event) => {
-    if (event.key === 'Enter') {
-        try {
-            const response = await axios.get(`${apiUrl}/customer/${roNumber}`);
-            setCustomerData(response.data);
-        } catch (error) {
-            console.error('Error fetching customer data:', error);
-        }
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/customer/${roNumber}`);
+      setCustomerData(response.data);
+    } catch (error) {
+      console.error('Error fetching customer data:', error);
     }
-};
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();  // Call handleSearch on Enter key press
+    }
+  };;
+
+
 
 const [inputValue, setInputValue] = useState('');
 
@@ -143,7 +149,7 @@ const [inputValue, setInputValue] = useState('');
               size="small"
               sx={{ width: '100%' }} // Ensures full-width in responsive layouts
               value={roNumber}
-              onKeyDown={handleSearch}
+              onKeyDown={handleKeyDown}
               onChange={(e) => setRoNumber(e.target.value)}
             />
             <IconButton color="primary" variant="contained"  onClick={handleSearch} aria-label="search">
