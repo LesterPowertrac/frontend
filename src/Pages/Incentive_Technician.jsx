@@ -188,7 +188,7 @@ const [inputValue, setInputValue] = useState('');
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
             {customerData ? (
             <span> Manufacturer/Model: <br/>
-              <span className={Styles.TextBlue}>{customerData.Model || ''}</span>
+              <span className={Styles.TextBlue}>{customerData.Vinchassisno || ''}</span>
             </span>
             ) : (
               <span>Chassis Number: {''}</span>
