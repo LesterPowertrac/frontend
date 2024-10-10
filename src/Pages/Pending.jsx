@@ -39,7 +39,7 @@ const Pending = () => {
   // State for Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
+  const [loading, setLoading] = useState(false);
 
 
   // Handle page change
@@ -70,86 +70,106 @@ const Pending = () => {
     const apiUrl = getApiUrl();
 
   // Selection Handlers
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((_, index) => index);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+// Selection Handlers
+const handleSelectAllClick = (event) => {
+  if (event.target.checked) {
+    const newSelecteds = rows.map((row) => row.id);
+    setSelected(newSelecteds);
+    return;
+  }
+  setSelected([]);
+};
 
-  const handleClick = (event, index) => {
-    const selectedIndex = selected.indexOf(index);
-    let newSelected = [];
+const handleClick = (event, id) => {
+  const selectedIndex = selected.indexOf(id);
+  let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, index);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
+  if (selectedIndex === -1) {
+    newSelected = newSelected.concat(selected, id);
+  } else if (selectedIndex === 0) {
+    newSelected = newSelected.concat(selected.slice(1));
+  } else if (selectedIndex === selected.length - 1) {
+    newSelected = newSelected.concat(selected.slice(0, -1));
+  } else if (selectedIndex > 0) {
+    newSelected = newSelected.concat(
+      selected.slice(0, selectedIndex),
+      selected.slice(selectedIndex + 1)
+    );
+  }
 
-    setSelected(newSelected);
-  };
+  setSelected(newSelected);
+};
 
-  const handleBulkDelete = () => {
-    const updatedRows = rows.filter((_, index) => !selected.includes(index));
-    setRows(updatedRows);
-    setSelected([]);
-    localStorage.setItem('rows', JSON.stringify(updatedRows));
-  };
+const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  const isSelected = (index) => selected.indexOf(index) !== -1;
+const handleBulkDelete = () => {
+  const updatedRows = rows.filter((row) => !selected.includes(row.id));
+  setRows(updatedRows);
+  setSelected([]);
+  localStorage.setItem('rowss', JSON.stringify(updatedRows));
 
-  useEffect(() => {
-    const savedRows = localStorage.getItem('rows');
-    if (savedRows) {
-      setRows(JSON.parse(savedRows));
-    }
-  }, []);
-
-
-  const handleSearch = async (index) => {
-    try {
-      const response = await axios.get(`${apiUrl}/pending/${rows[index].AutoIDnumber}`, {
-        headers: {
-          'ngrok-skip-browser-warning': 'true', // Example custom header
-          // Add other headers here if needed
-        }
-      })
-      const data = response.data;
-      // Format the Dateofpurchase field
-      if (data.Dateofpurchase) {
-        data.Dateofpurchase = formatDate(data.Dateofpurchase);
-      }
-
-      const updatedRows = rows.map((row, i) => (i === index ? { ...row, ...data } : row));
-      setRows(updatedRows);
-      localStorage.setItem('rowss', JSON.stringify(updatedRows));
-      setError(null);
-    } catch (err) {
-      setError('Record not found');
+  // Calculate the new maximum page based on updatedRows
+  const maxPage = Math.ceil(updatedRows.length / rowsPerPage) - 1;
   
-      // Do not clear rows; just notify user that the record was not found
-      const updatedRows = rows.map((row, i) => (i === index ? { ...row, companyData: null } : row));
-      setRows(updatedRows);
-      localStorage.setItem('rowss', JSON.stringify(updatedRows));
+  // If the current page exceeds the maxPage, set it to maxPage
+  if (page > maxPage) {
+    setPage(maxPage >= 0 ? maxPage : 0);
+  }
+};
+
+const handleSearch = async (id) => {
+  const row = rows.find((r) => r.id === id);
+  if (!row) return; // If the row does not exist, exit the function
+
+  try {
+    const response = await axios.get(`${apiUrl}/pending/${row.AutoIDnumber}`, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
+
+    const data = response.data;
+
+    // Format the Dateofpurchase field if it exists
+    if (data.Dateofpurchase) {
+      data.Dateofpurchase = formatDate(data.Dateofpurchase);
     }
-  };
+
+    // Update the specific row in the state
+    setRows((prevRows) => {
+      const updatedRows = prevRows.map((r) =>
+        r.id === id ? { ...r, ...data } : r
+      );
+      localStorage.setItem('rowss', JSON.stringify(updatedRows)); // Save updated data to localStorage
+      return updatedRows;
+    });
+
+  } catch (err) {
+    // Update the specific row with null companyData
+    setRows((prevRows) => {
+      const updatedRows = prevRows.map((r) =>
+        r.id === id ? { ...r, companyData: null } : r
+      );
+      localStorage.setItem('rowss', JSON.stringify(updatedRows));
+      return updatedRows;
+    });
+  }
+};
+
 
   useEffect(() => {
-    const savedRows = localStorage.getItem('rowss','date');
+    const savedRows = localStorage.getItem('rowss');
     if (savedRows) {
-      setRows(JSON.parse(savedRows));
+      const parsedRows = JSON.parse(savedRows);
+      // Assign unique IDs if not present
+      const rowsWithIds = parsedRows.map(row => ({
+        id: row.id || Date.now() + Math.random(), // Assign if missing
+        ...row
+      }));
+      setRows(rowsWithIds);
     }
   }, []);
+  
 
   const handleExport = async () => {
     if (!rows.length) return;
@@ -236,6 +256,7 @@ const Pending = () => {
 
   const handleAddRow = () => {
     const newRow = {
+      id: Date.now(),
       ROnumber: '',
       DOCNumber: '',
       AutoIDnumber: '',
@@ -253,17 +274,31 @@ const Pending = () => {
   };
 
 
-  const handleRowChange = (index, field, value) => {
-    setRows((prevRows) => {
-      // Update the specific row
-      const updatedRows = prevRows.map((row, i) => 
-        i === index ? { ...row, [field]: value } : row
-      );
-      
-      // Update localStorage with the updated rows immediately
-      localStorage.setItem('rows', JSON.stringify(updatedRows));
+  const handleRowChange = (id, field, value) => {
+    const validFields = [
+      'ROnumber',
+      'DOCNumber',
+      'AutoIDnumber',
+      'Companyname',
+      'Address',
+      'Model',
+      'Vinchassisno',
+      'Remarksnote',
+      'Dateofpurchase',
+      'Serviceentry'
+    ];
   
-      return updatedRows; // Return the updated state
+    if (!validFields.includes(field)) {
+      console.warn(`Attempted to update invalid field: ${field}`);
+      return;
+    }
+  
+    setRows((prevRows) => {
+      const updatedRows = prevRows.map((row) => 
+        row.id === id ? { ...row, [field]: value } : row
+      );
+      localStorage.setItem('rowss', JSON.stringify(updatedRows));
+      return updatedRows;
     });
   };
 
@@ -365,21 +400,22 @@ const Pending = () => {
           </TableHead>
           <TableBody>
           {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-            const isItemSelected = isSelected(index); // Check if row is selected
-            const labelId = `checkbox-${index}`;
+            const isItemSelected = isSelected(row.id); // Use unique 'id'
+            const labelId = `checkbox-${row.id}`;
+            const globalIndex = page * rowsPerPage + index; // If needed for numbering
               return (
                 <TableRow
                 hover
                 role="checkbox"
                 aria-checked={isItemSelected}
                 tabIndex={-1}
-                key={index}
+                key={row.id}
                 selected={isItemSelected}
               >
               <TableCell padding="checkbox" sx={{ borderRight: '1px solid #ccc' }}>
                 <Checkbox
                   checked={isItemSelected}
-                  onChange={(event) => handleClick(event, index)}
+                  onChange={(event) => handleClick(event, row.id)}
                   inputProps={{
                     'aria-labelledby': labelId,
                   }}
@@ -392,11 +428,11 @@ const Pending = () => {
                   <input
                       type="text"
                       value={row.AutoIDnumber}
-                      onChange={(e) => handleRowChange(index, 'AutoIDnumber', e.target.value)}
+                      onChange={(e) => handleRowChange(row.id, 'AutoIDnumber', e.target.value)}
                       placeholder="Enter SO"
                     />
                     <div style={{textAlign: 'center'}}>
-                    <Button size="small" sx={{margin: '1rem'}}  variant='contained' onClick={() => handleSearch(index)}>Search</Button >
+                    <Button size="small" sx={{margin: '1rem'}}  variant='contained' onClick={() => handleSearch(row.id)}>Search</Button >
                     </div>           
               </TableCell>
               <TableCell sx={{ borderRight: '1px solid #ccc' }}>{row.Companyname}</TableCell>
@@ -404,12 +440,12 @@ const Pending = () => {
                   <input
                     type="text"
                     value={row.ROnumber}
-                    onChange={(e) => handleRowChange(index, 'ROnumber', e.target.value)}
+                    onChange={(e) => handleRowChange(row.id, 'ROnumber', e.target.value)}
                   />
 
               </TableCell>
               <TableCell sx={{ borderRight: '1px solid #ccc' }}>
-                <input type="text" value={row.DOCNumber} onChange={(e) => handleRowChange(index, 'DOCNumber', e.target.value)}  />
+                <input type="text" value={row.DOCNumber} onChange={(e) => handleRowChange(row.id, 'DOCNumber', e.target.value)}  />
               </TableCell>
             
               <TableCell sx={{ borderRight: '1px solid #ccc' }}>

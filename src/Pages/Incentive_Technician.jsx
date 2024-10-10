@@ -136,8 +136,8 @@ const [inputValue, setInputValue] = useState('');
       {/* Right side: Breadcrumbs */}
       <Grid  xs={12} sm={12} md={4} display="flex" justifyContent="flex-end">
         <Breadcrumbs aria-label="breadcrumb">
-          <Link to='/incentives'>Dashboard</Link>
-          <Link to='/incentives'>Incentives Technician</Link>
+          <Link to='/incentive_technician'>Dashboard</Link>
+          <Link to='/incentive_technician'>Incentives Technician</Link>
         </Breadcrumbs>
       </Grid>
       </Grid>
