@@ -4,7 +4,6 @@ import axios from 'axios';
 import Styles from '../css/Text.module.css'
 import {
           Breadcrumbs,
-          Button, 
           TableContainer,
           Paper,
           TextField,
@@ -33,20 +32,24 @@ const Incentive_Technician = () => {
 
   const apiUrl = getApiUrl();
 
-  const handleSearch = async (event) => {
-    if (event.key === 'Enter') {
-        try {
-            const response = await axios.get(`${apiUrl}/customer/${roNumber}`, {
-              headers: { 
-                'ngrok-skip-browser-warning': true
-              }
-            });
-            setCustomerData(response.data);
-        } catch (error) {
-            console.error('Error fetching customer data:', error);
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/customer/${roNumber}`, {
+        headers: { 
+          'ngrok-skip-browser-warning': true
         }
+      });
+      setCustomerData(response.data);
+    } catch (error) {
+      console.error('Error fetching customer data:', error);
     }
-};
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleSearch();  // Call handleSearch on Enter key press
+    }
+  };
 
 const [inputValue, setInputValue] = useState('');
 
@@ -112,7 +115,7 @@ const [inputValue, setInputValue] = useState('');
 
         <PDFExportButton
         targetIds={['printable-area-1', 'printable-area-2', 'printable-area-3', 'printable-area-4', 'printable-area-5', 
-                    'printable-area-6', 'printable-area-7', 'printable-area-8', 'printable-area-9'
+                    'printable-area-6', 'printable-area-7'
                   ]} 
         filename="combined_report.pdf" sx={{ display: 'flex' }} 
         />
@@ -139,7 +142,7 @@ const [inputValue, setInputValue] = useState('');
       </Grid>
       </Grid>
       <br/> 
-      <div id="printable-area-2"> 
+      <div id="printable-area-1"> 
       <Grid container spacing={2} alignItems="center" justifyContent="space-between">
         <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
           <h4><b>INCENTIVE & EVALUATION FORM (SERVICE TECHNICIAN)</b></h4>
@@ -149,11 +152,11 @@ const [inputValue, setInputValue] = useState('');
             <TextField
               id="RO number"
               label="RO number"
-              variant="outlined"
+              variant="filled"
               size="small"
               sx={{ width: '100%' }} // Ensures full-width in responsive layouts
               value={roNumber}
-              onKeyDown={handleSearch}
+              onKeyDown={handleKeyDown}
               onChange={(e) => setRoNumber(e.target.value)}
             />
             <IconButton color="primary" variant="contained"  onClick={handleSearch} aria-label="search">
@@ -168,7 +171,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper} >
       
       <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}} >
-        <tbody id="printable-area-3">
+        <tbody id="printable-area-2">
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
             {customerData ? (
@@ -232,7 +235,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
       <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}} >
-        <tbody id="printable-area-4">
+        <tbody id="printable-area-3">
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd', width: '31%'}} rowSpan={'4'}>
               <span style={{textDecorationLine: 'underline'}}>Quarterly Cash Incentive Program Mechanic:<br/>
@@ -454,7 +457,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
-          <thead id="printable-area-3">
+          <tbody id="printable-area-4">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}></th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Labor Sales</th>
@@ -462,8 +465,7 @@ const [inputValue, setInputValue] = useState('');
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Labor Warranty Sales</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Parts Warranty Sales</th>
             </tr>
-          </thead>
-          <tbody>
+  
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>GENERATED SALES</th>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}><TextField size="small" variant="outlined"/></td>
@@ -479,13 +481,12 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
-          <thead id="printable-area-5">
+          <tbody id="printable-area-5">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Special Comments:</th>
             </tr>
-          </thead>
           
-          <tbody id="printable-area-6">
+         
             <tr>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
                 <TextField sx={{width: '100%'}} size="small" variant="outlined"/>
@@ -506,7 +507,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}}>
-          <thead id="printable-area-7">
+          <tbody id="printable-area-6">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Advisor</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Asst. Service Manager</th>
@@ -516,8 +517,7 @@ const [inputValue, setInputValue] = useState('');
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Accounting</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>President</th>
             </tr>
-          </thead>
-          <tbody id="printable-area-8">
+         
             <tr>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
               {customerData ? (
@@ -545,7 +545,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper}>
      
         <table style={{margin: '0.5rem', width: '100%', border:' 1px solid #dddddd'}}>
-          <tbody id="printable-area-9">
+          <tbody id="printable-area-7">
             <tr>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Control Number:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Process By:<TextField sx={{marginLeft: '0.5rem'}} size="small" variant="outlined"/></td>

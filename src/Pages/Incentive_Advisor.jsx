@@ -49,7 +49,7 @@ const Incentive_Technician = () => {
     if (event.key === 'Enter') {
       handleSearch();  // Call handleSearch on Enter key press
     }
-  };;
+  };
 
 
 
@@ -140,7 +140,7 @@ const [inputValue, setInputValue] = useState('');
       </Grid>
       </Grid>
       <br/> 
-      <Grid container spacing={2} alignItems="center" justifyContent="space-between" id="printable-area-2" >
+      <Grid container spacing={2} alignItems="center" justifyContent="space-between" id="printable-area-1" >
         <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
           <h4 className={Styles.TextBlack}><b>INCENTIVE & EVALUATION FORM (SERVICE ADVISOR)</b></h4>
         </Grid>
@@ -168,7 +168,7 @@ const [inputValue, setInputValue] = useState('');
       <TableContainer component={Paper} >
       
       <table style={{margin: '0.5rem', width: '105%', border:' 1px solid #dddddd'}} >
-        <tbody id="printable-area-3">
+        <tbody id="printable-area-2">
           <tr>
             <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>
             {customerData ? (
