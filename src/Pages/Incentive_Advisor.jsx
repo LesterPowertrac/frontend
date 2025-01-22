@@ -620,7 +620,7 @@ const [inputValue, setInputValue] = useState('');
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Charlie</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Vivian</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Rhea</td>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Angel/Shiela</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}> <TextField sx={{width: '50%'}} name='warranty officer' size="small" variant="outlined"/></td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Jeff</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Boss Lito</td>
             </tr>
