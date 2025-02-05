@@ -25,7 +25,7 @@ import {
   TablePagination
 } from '@mui/material';
 
-import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, FilterList as FilterListIcon } from '@mui/icons-material';
 
 const Monitoring = React.memo(() => {
     const [error, setError] = useState(null);
@@ -350,7 +350,7 @@ const handleClick = (event, id) => {
 // src/components/Monitoring.js
 
 return (
-  <div>
+  <div >
     <Grid container spacing={2} alignItems="center">
       {/* Left side: Export Button */}
       <Grid  xs={12} sm={6} md={4} sx={{ flexGrow: 1 }}>
@@ -381,7 +381,7 @@ return (
 
      
     <div>
-      {warning && <h1 style={{ color: 'red', fontWeight: 'bold', textAlig: 'center',n: 'center' }}>{warning}</h1>}
+      {warning && <h1 style={{ color: 'red', fontWeight: 'bold', textAlign: 'center',n: 'center' }}>{warning}</h1>}
 
       {/* Conditional Toolbar for Bulk Actions */}
       {selected.length > 0 && (
@@ -410,15 +410,15 @@ return (
       )}
       {/* MUI Table */}
       <TableContainer  component={Paper} style={{ overflowX: 'auto' }} sx={{ borderStyle: 'ridge', borderCollapse: 'collapse', maxHeight: '400px', overflowY: 'auto'}}>
-      <div >
+     
       
         <Table>
           <TableHead>
             <TableRow >
               {/* Master Checkbox */}
-              <TableCell padding="checkbox" sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
+              <TableCell padding="checkbox" sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
                 <Checkbox    
-                  name={'checkbox-header'}     
+                  // name={'checkbox-header'}     
                   indeterminate={selected.length > 0 && selected.length < rows.length}
                   checked={rows.length > 0 && selected.length === rows.length}
                   onChange={handleSelectAllClick}
@@ -428,39 +428,39 @@ return (
                 />
               </TableCell>
               {/* Table Headers with Sorting */}
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
                   No.
               </TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
                   RO.TURN-OVER DATE(DATE ENDORSED)
               </TableCell>
               {/* Repeat for other headers with appropriate orderBy keys */}
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF VALIDATION</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF VALIDATION</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>
                   R.O NO.
               </TableCell>
               {/* Continue for other headers */}
               {/* Example: */}
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DOC NO.</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CUSTOMER NAME</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CONTACT NO.</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF SERVICE</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE COMPLETED</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>LOCATION</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>REGION</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>UNIT/MODEL</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>VIN./CHASSIS NO</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>ENGINE NO</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>SO CONCERN</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE PURCHASE</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>UW/FO/CH/CL</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>MECHANIC ASSIGNED</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>SERVICE ADVISOR</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>REMARKS (Actual repair done)</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>VOC (Voice of the customer)</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>STATUS</TableCell>
-              <TableCell sx={{ textAlig: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>FOLLOW UP</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DOC NO.</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CUSTOMER NAME</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CONTACT NO.</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF SERVICE</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE COMPLETED</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>LOCATION</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>REGION</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>UNIT/MODEL</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>VIN./CHASSIS NO</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>ENGINE NO</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>SO CONCERN</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE PURCHASE</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>UW/FO/CH/CL</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>MECHANIC ASSIGNED</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>SERVICE ADVISOR</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>REMARKS (Actual repair done)</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>VOC (Voice of the customer)</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>STATUS</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>FOLLOW UP</TableCell>
             </TableRow>
           </TableHead>
           <TableBody >
@@ -483,7 +483,7 @@ return (
                       id={`select-${row.id}`} // Unique id for checkbox
                       name={`select-${row.id}`} // Unique name for checkbox 
                       checked={isItemSelected}
-                      onChange={(event) => handleClick(event, index)}
+                      onChange={(event) => handleClick(event, row.id)}
                       inputProps={{ 'aria-labelledby': labelId }}
                     />
                   </TableCell>
@@ -500,7 +500,7 @@ return (
                       onChange={(e) => handleRowChange(row.id, 'ROnumber', e.target.value)}
                       placeholder="Enter ROnumber"
                     />
-                    <div style={{textAlig: 'center',n: 'center'}}>
+                    <div style={{textAlign: 'center',n: 'center'}}>
                     <Button size="small" sx={{margin: '1rem'}}  variant='contained' onClick={() => handleSearch(row.id)}>Search</Button >
                     </div>
                   </TableCell>
@@ -556,7 +556,7 @@ return (
         </Table>
           {/* Pagination Component */}
 
-        </div>
+        
 
       </TableContainer>
       <Paper sx={{ width: '100%' }}>
@@ -572,7 +572,7 @@ return (
               id='TablePagination'
             />
         </Paper>
-      <div style={{textAlign: 'center',n: 'center'}}>
+      <div style={{textAlignn: 'center',n: 'center'}}>
         <Button variant="contained" onClick={handleAddRow}>Add Row</Button>
       </div>
     </div>
