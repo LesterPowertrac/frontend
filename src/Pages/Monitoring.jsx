@@ -562,7 +562,7 @@ return (
       <Paper sx={{ width: '100%' }}>
         <TablePagination
               name={"TablePagination"}
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
               component="div"
               count={rows.length}
               rowsPerPage={rowsPerPage}
