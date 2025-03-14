@@ -25,7 +25,7 @@ import {
   TablePagination
 } from '@mui/material';
 
-import { Delete as DeleteIcon, FilterList as FilterListIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 
 const Monitoring = React.memo(() => {
     const [error, setError] = useState(null);
@@ -36,7 +36,7 @@ const Monitoring = React.memo(() => {
     // State for Pagination
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
       // Handle page change
     const handleChangePage = (event, newPage) => {
       setPage(newPage);
