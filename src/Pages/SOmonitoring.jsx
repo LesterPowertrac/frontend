@@ -57,7 +57,11 @@ const SOmonitoring = () => {
       return;
     }
     try {
-      const response = await axios.get(`${apiUrl}/somonitoring?date=${filterDate}`);
+      const response = await axios.get(`${apiUrl}/somonitoring?date=${filterDate}`, {
+        headers: { 
+          'ngrok-skip-browser-warning': true
+        }
+      });
       
       const filteredData = response.data
         .map(row => ({
