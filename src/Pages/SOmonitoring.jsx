@@ -47,22 +47,24 @@ const SOmonitoring = () => {
   const [data, setData] = useState([]);
   const [selected, setSelected] = useState([]);
   const [filterDate, setFilterDate] = useState('');
-
   // Fetch data only when a date is selected
   const formatDate = (dateString) => dateString ? dateString.split('T')[0] : '';
 
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  
   const fetchData = useCallback(async () => {
-    if (!filterDate) {
-      setData([]); // Clear table if no date is selected
+    if (!startDate || !endDate) {
+      setData([]); // Clear table if no date range is selected
       return;
     }
     try {
-      const response = await axios.get(`${apiUrl}/somonitoring?date=${filterDate}`, {
+      const response = await axios.get(`${apiUrl}/somonitoring?startDate=${startDate}&endDate=${endDate}`, {
         headers: { 
           'ngrok-skip-browser-warning': true
         }
       });
-      
+  
       const filteredData = response.data
         .map(row => ({
           ...row,
@@ -72,7 +74,7 @@ const SOmonitoring = () => {
           Dateofpurchase: formatDate(row.Dateofpurchase)
         }))
         .filter(row => {
-          // Check if at least one of these fields has a value
+          // Only show rows where all of these fields are empty
           const relevantColumns = [
             row.Mechaniccodename,
             row.Actualrepairdone,
@@ -80,14 +82,17 @@ const SOmonitoring = () => {
             row.Pwsno,
             row.Approvalconformationlog
           ];
-          return relevantColumns.some(value => value && value.trim() !== '');
+          
+          return relevantColumns.every(value => !value || value.trim() === '');
         });
   
       setData(filteredData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, [apiUrl, filterDate]);
+  }, [apiUrl, startDate, endDate]);
+  
+  
   
 
   // Fetch data only when filterDate changes
@@ -197,13 +202,19 @@ const SOmonitoring = () => {
     <div>
       {/* Date Filter */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <TextField
-          label="Filter by Date"
-          type="date"
-          shrink='true'
-          value={filterDate}
-          onChange={(e) => setFilterDate(e.target.value)}
-        />
+      <TextField
+    label="Start Date"
+    type="date"
+    value={startDate}
+    onChange={(e) => setStartDate(e.target.value)}
+    sx={{ marginRight: 2 }}
+  />
+  <TextField
+    label="End Date"
+    type="date"
+    value={endDate}
+    onChange={(e) => setEndDate(e.target.value)}
+  />
       </div>
       <Button variant="contained" color="primary" onClick={handleExport}>
         Export to Excel
