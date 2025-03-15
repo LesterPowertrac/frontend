@@ -96,9 +96,9 @@ const SOmonitoring = () => {
   
 
   // Fetch data only when filterDate changes
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [fetchData]);
 
   const handleExport = useCallback(async () => {
     if (!data.length) return;
@@ -203,18 +203,26 @@ const SOmonitoring = () => {
       {/* Date Filter */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
       <TextField
-    label="Start Date"
-    type="date"
-    value={startDate}
-    onChange={(e) => setStartDate(e.target.value)}
-    sx={{ marginRight: 2 }}
-  />
-  <TextField
-    label="End Date"
-    type="date"
-    value={endDate}
-    onChange={(e) => setEndDate(e.target.value)}
-  />
+        label="Start Date"
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        sx={{ marginRight: 2 }}
+      />
+      <TextField
+        label="End Date"
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        sx={{ marginRight: 2 }}
+      />
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={fetchData} // Fetch data only when the button is clicked
+      >
+        Apply
+      </Button>
       </div>
       <Button variant="contained" color="primary" onClick={handleExport}>
         Export to Excel
