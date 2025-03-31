@@ -225,6 +225,7 @@ const handleClick = (event, id) => {
         { header: 'DATE OF VALIDATION', key: 'index', width: 30 },
         { header: 'RO Number', key: 'ROnumber', width: 30 },
         { header: 'DOC Number', key: 'DOCNumber', width: 30 },
+        { header: 'CSD Number', key: 'CompanyCSOID', width: 30 },
         { header: 'S.O Number', key: 'AutoIDnumber', width: 30 },
         { header: 'Customer Name', key: 'Companyname', width: 40 },
         { header: 'Contact No.', key: 'Telephone', width: 30 },
@@ -282,6 +283,7 @@ const handleClick = (event, id) => {
         id: Date.now(), // Simple unique ID using timestamp
         ROnumber: '',
         DOCNumber: '',
+        CompanyCSOID: '',
         AutoIDnumber: '',
         Companyname: '',
         Telephone: '',
@@ -312,6 +314,7 @@ const handleClick = (event, id) => {
       const validFields = [
         'ROnumber',
         'DOCNumber',
+        'CompanyCSOID',
         'AutoIDnumber',
         'Companyname',
         'Telephone',
@@ -443,7 +446,8 @@ return (
               {/* Example: */}
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DOC NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CUSTOMER NAME</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CSD NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CONTACT NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF SERVICE</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE COMPLETED</TableCell>
@@ -509,10 +513,11 @@ return (
                     <input
                       type="text"
                       id={`DOCNumber-${row.id}`} // Unique id for each input
-                      name={`DOCNumber-${row.id}`} // Unique name for each input
+                      name={`DOCNumber-${row.id}`} // Unique name for each input 
                       value={row.DOCNumber}
                       onChange={(e) => handleRowChange(row.id, 'DOCNumber', e.target.value)}
                     />
+                  <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.CompanyCSOID}</TableCell>
                   </TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.AutoIDnumber}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Companyname}</TableCell>
