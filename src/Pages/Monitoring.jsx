@@ -445,9 +445,8 @@ return (
               {/* Continue for other headers */}
               {/* Example: */}
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DOC NO.</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
-              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CSD NO.</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CONTACT NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF SERVICE</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE COMPLETED</TableCell>
@@ -517,8 +516,8 @@ return (
                       value={row.DOCNumber}
                       onChange={(e) => handleRowChange(row.id, 'DOCNumber', e.target.value)}
                     />
-                  <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.CompanyCSOID}</TableCell>
                   </TableCell>
+                  <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.CompanyCSOID}</TableCell>                  
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.AutoIDnumber}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Companyname}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Telephone}</TableCell>
