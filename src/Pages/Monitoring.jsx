@@ -132,8 +132,9 @@ const handleClick = (event, id) => {
       });
       const data = response.data;
       // Format the Dateofpurchase field
-      if (data.Dateofpurchase) {
+      if (data.Dateofpurchase || data.Date) {
         data.Dateofpurchase = formatDate(data.Dateofpurchase);
+        data.Date = formatDate(data.Date);
       }
   
       setRows((prevRows) => {
@@ -443,6 +444,7 @@ return (
               {/* Example: */}
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DOC NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>S.O NO.</TableCell>
+              <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>COMPANY NAME</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>CONTACT NO.</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE OF SERVICE</TableCell>
               <TableCell sx={{ textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #ccc' }}>DATE COMPLETED</TableCell>
@@ -465,8 +467,8 @@ return (
           <TableBody >
           {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
               const isItemSelected = isSelected(row.id); // Use unique 'id'
-              const labelId = `checkbox-${row.id}`;
-              const globalIndex = page * rowsPerPage + index; // If needed for numbering
+              const labelId = `checkbox${row.id}`;
+              // const globalIndex = page * rowsPerPage + index; // If needed for numbering
               return (
                 
                 <TableRow
@@ -479,8 +481,8 @@ return (
                 >
                   <TableCell padding="checkbox" sx={{ borderRight: '1px solid #ccc' }}>
                     <Checkbox
-                      id={`select-${row.id}`} // Unique id for checkbox
-                      name={`select-${row.id}`} // Unique name for checkbox 
+                      id={`select${row.id}`} // Unique id for checkbox
+                      name={`select${row.id}`} // Unique name for checkbox 
                       checked={isItemSelected}
                       onChange={(event) => handleClick(event, row.id)}
                       inputProps={{ 'aria-labelledby': labelId }}
@@ -493,8 +495,8 @@ return (
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>
                     <input
                       type="text"
-                      id={`ROnumber-${row.id}`} // Unique id for each input
-                      name={`ROnumber-${row.id}`} // Unique name for each input
+                      id={`ROnumber${row.id}`} // Unique id for each input
+                      name={`ROnumber${row.id}`} // Unique name for each input
                       value={row.ROnumber}
                       onChange={(e) => handleRowChange(row.id, 'ROnumber', e.target.value)}
                       placeholder="Enter ROnumber"
@@ -507,8 +509,8 @@ return (
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>
                     <input
                       type="text"
-                      id={`DOCNumber-${row.id}`} // Unique id for each input
-                      name={`DOCNumber-${row.id}`} // Unique name for each input 
+                      id={`DOCNumber${row.id}`} // Unique id for each input
+                      name={`DOCNumber${row.id}`} // Unique name for each input 
                       value={row.DOCNumber}
                       onChange={(e) => handleRowChange(row.id, 'DOCNumber', e.target.value)}
                     />
@@ -519,17 +521,17 @@ return (
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>
                     <input
                       type="date"
-                      id={`Dateofservice-${row.id}`} // Unique id for each input
-                      name={`Dateofservice-${row.id}`} // Unique name for each input
-                      value={row.Dateofservice}
+                      id={`Dateofservice${row.id}`} // Unique id for each input
+                      name={`Dateofservice${row.id}`} // Unique name for each input
+                      value={row.Date}
                       onChange={(e) => handleRowChange(row.id, 'Dateofservice', e.target.value)}
                     />
                   </TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>
                     <input
                       type="date"
-                      id={`Dateofservice-${row.id}`} // Unique id for each input
-                      name={`Dateofservice-${row.id}`} // Unique name for each input
+                      id={`Dateofcompleted${row.id}`} // Unique id for each input
+                      name={`Dateofcompleted${row.id}`} // Unique name for each input
                       value={row.Dateofcompleted}
                       onChange={(e) => handleRowChange(row.id, 'Dateofcompleted', e.target.value)}
                     />
