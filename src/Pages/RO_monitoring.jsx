@@ -252,6 +252,7 @@ const RO_monitoring = () => {
         type="date"
         value={startDate}
         onChange={(e) => setStartDate(e.target.value)}
+        focused 
         />
 
         <TextField
@@ -259,6 +260,7 @@ const RO_monitoring = () => {
         type="date"
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
+        focused
         />
 
         <Button

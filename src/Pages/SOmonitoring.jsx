@@ -195,6 +195,7 @@ const SOmonitoring = () => {
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           sx={{ marginRight: 2 }}
+          focused
         />
         <TextField
           label="End Date"
@@ -202,6 +203,7 @@ const SOmonitoring = () => {
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
           sx={{ marginRight: 2 }}
+          focused
         />
         
         {/* Apply Button with Loading Indicator */}
