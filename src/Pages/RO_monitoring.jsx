@@ -78,7 +78,8 @@ const RO_monitoring = () => {
           row.Approvalconformationlog
         ];
         
-        return relevantColumns.every(value => value && value.trim() !== '');
+        return relevantColumns.some(value => value && value.trim() !== '');
+
       })
       .filter(row =>
         !searchName || row.Companyname?.toLowerCase().includes(searchName.toLowerCase())
@@ -90,7 +91,7 @@ const RO_monitoring = () => {
     } finally {
       setLoading(false); // Stop loading
     }
-  }, [apiUrl, startDate, endDate]);
+  }, [apiUrl, startDate, endDate, searchName]);
 
   const handleExport = useCallback(async () => {
     if (!data.length) return;
