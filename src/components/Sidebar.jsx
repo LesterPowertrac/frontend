@@ -135,6 +135,15 @@ export default function Sidebar() {
             </ListItemButton>
           </ListItem>
 
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate("/ro-monitoring"); }}>
+            <ListItemButton sx={{ minHeight: 48, px: 2.5, justifyContent: open ? 'initial' : 'center' }}>
+              <ListItemIcon sx={{ minWidth: 0, justifyContent: 'center', mr: open ? 3 : 'auto' }}>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="RO-Monitoring" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+
           {/* Main List Item for Incentives */}
           <ListItem disablePadding  sx={{ display: 'block' }}>
             <ListItemButton onClick={handleDropdownToggle} sx={{ minHeight: 48, px: 2.5, justifyContent: open ? 'initial' : 'center' }}>

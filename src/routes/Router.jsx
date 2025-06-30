@@ -20,6 +20,7 @@ import CategoriesEdit from "../Pages/CategoriesEdit";
 import Incentives_Technician from '../Pages/Incentive_Technician';
 import Incentive_Advisor from '../Pages/Incentive_Advisor';
 import SOmonitoring from "../Pages/SOmonitoring";
+import RO_monitoring from "../Pages/RO_monitoring";
 
 const Router = createHashRouter([
     {
@@ -109,6 +110,10 @@ const Router = createHashRouter([
             {
                 path: '/so-monitoring',
                 element: <SOmonitoring/>
+            },
+            {
+                path: '/ro-monitoring',
+                element: <RO_monitoring/>
             },
         ],
     },

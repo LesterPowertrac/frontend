@@ -1,12 +1,13 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect  } from 'react';
 import axios from 'axios';
 import DataTable from '../components/DataTable';
 import { TextField, Button, CircularProgress } from '@mui/material';
 import config from '../api/config';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { Autocomplete, Box } from '@mui/material';
 
-const SOmonitoring = () => {
+const RO_monitoring = () => {
   // API setup
   const apiUrl = window.location.hostname === 'localhost' ? config.api.local : config.api.remote;
 
@@ -43,7 +44,8 @@ const SOmonitoring = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [loading, setLoading] = useState(false); // Add loading state
-
+  const [searchName, setSearchName] = useState('');
+  const [companyOptions, setCompanyOptions] = useState([]);
   const formatDate = (dateString) => dateString ? dateString.split('T')[0] : '';
 
   const fetchData = useCallback(async () => {
@@ -59,26 +61,29 @@ const SOmonitoring = () => {
       });
 
       const filteredData = response.data
-        .map(row => ({
-          ...row,
-          Date: formatDate(row.Date),
-          Dateofservice: formatDate(row.Dateofservice),
-          Dateofcompleted: formatDate(row.Dateofcompleted),
-          Dateofpurchase: formatDate(row.Dateofpurchase)
-        }))
-        .filter(row => {
-          // Only show rows where all of these fields are empty
-          const relevantColumns = [
-            row.Mechaniccodename,
-            row.Actualrepairdone,
-            row.Technicianscomments,
-            row.Pwsno,
-            row.Approvalconformationlog
-          ];
-          
-          return relevantColumns.every(value => value && value.trim() !== '');
-        });
-
+      .map(row => ({
+        ...row,
+        Date: formatDate(row.Date),
+        Dateofservice: formatDate(row.Dateofservice),
+        Dateofcompleted: formatDate(row.Dateofcompleted),
+        Dateofpurchase: formatDate(row.Dateofpurchase)
+      }))
+      .filter(row => {
+        // Only show rows where all of these fields are NOT empty
+        const relevantColumns = [
+          row.Mechaniccodename,
+          row.Actualrepairdone,
+          row.Technicianscomments,
+          row.Pwsno,
+          row.Approvalconformationlog
+        ];
+        
+        return relevantColumns.every(value => value && value.trim() !== '');
+      })
+      .filter(row =>
+        !searchName || row.Companyname?.toLowerCase().includes(searchName.toLowerCase())
+      );
+    
       setData(filteredData);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -185,35 +190,88 @@ const SOmonitoring = () => {
     saveAs(blob, 'CompanyData.xlsx');
   }, [data]);
 
+  useEffect(() => {
+    const fetchCompanyNames = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/somonitoring`, {
+          headers: { 'ngrok-skip-browser-warning': true }
+        });
+  
+        const names = response.data
+          .map(row => row.Companyname)
+          .filter(Boolean);
+  
+        const uniqueNames = [...new Set(names)];
+        setCompanyOptions(uniqueNames);
+      } catch (error) {
+        console.error('Failed to fetch company names:', error);
+      }
+    };
+  
+    fetchCompanyNames();
+  }, [apiUrl]);
+  
   return (
     <div>
       {/* Date Filter */}
-      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <TextField
-          label="Start Date"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          sx={{ marginRight: 2 }}
+     
+
+    <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+    <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexWrap="wrap"
+        gap={2}
+    >
+        <Autocomplete
+        freeSolo
+        disableClearable
+        options={companyOptions}
+        inputValue={searchName}
+        onInputChange={(e, newInputValue) => setSearchName(newInputValue)}
+        filterOptions={(options, state) =>
+            state.inputValue.trim() === ''
+            ? []
+            : options.filter(option =>
+                option.toLowerCase().includes(state.inputValue.toLowerCase())
+                )
+        }
+        renderInput={(params) => (
+            <TextField
+            {...params}
+            label="Search by Customer Name"
+            variant="outlined"
+            />
+        )}
+        sx={{ width: 300 }}
         />
+
         <TextField
-          label="End Date"
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          sx={{ marginRight: 2 }}
+        label="Start Date"
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
         />
-        
-        {/* Apply Button with Loading Indicator */}
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={fetchData} 
-          disabled={loading} // Disable when loading
+
+        <TextField
+        label="End Date"
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        />
+
+        <Button
+        variant="contained"
+        color="primary"
+        onClick={fetchData}
+        disabled={loading}
         >
-          {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Apply'}
+        {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Apply'}
         </Button>
-      </div>
+    </Box>
+    </div>
+
       <Button variant="contained" color="primary" onClick={handleExport}>
         Export to Excel
       </Button>
@@ -221,7 +279,7 @@ const SOmonitoring = () => {
       <DataTable
         columns={columns}
         data={data.map((row, index) => ({ ...row, id: index + 1 }))}
-        title="SO Monitoring"
+        title="RO Monitoring"
         selected={selected}
         setSelected={setSelected}
       />
@@ -229,4 +287,4 @@ const SOmonitoring = () => {
   );
 };
 
-export default SOmonitoring;
+export default RO_monitoring;
