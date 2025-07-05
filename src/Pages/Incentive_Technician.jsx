@@ -732,7 +732,7 @@ const [inputValue, setInputValue] = useState('');
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Charlie</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Vivian</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Rhea</td>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Angel/Shiela</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Angel/Shiela/Jennifer</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Jeff</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Boss Lito</td>
             </tr>

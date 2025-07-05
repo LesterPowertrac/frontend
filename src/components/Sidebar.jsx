@@ -164,6 +164,9 @@ export default function Sidebar() {
               <ListItemButton  onClick={() => navigate('/incentive_advisor')}>
                 <ListItemText primary="Incentive Advisor" sx={{ pl: 4,opacity: open ? 1 : 0  }} />
               </ListItemButton>
+              <ListItemButton  onClick={() => navigate('/Incentives_FleetAccount')}>
+                <ListItemText primary="Incentive Fleet Department" sx={{ pl: 4,opacity: open ? 1 : 0  }} />
+              </ListItemButton>              
             </List>
           </Collapse>
 
