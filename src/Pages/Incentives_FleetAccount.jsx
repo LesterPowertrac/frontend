@@ -262,8 +262,8 @@ const Incentives_FleetAccount = () => {
                 Program
               </td>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'4'}><label >Customer Relations Officer Rating</label></th>
-              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Service Manager Rating</label></th>
-              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Parts Manager Rating</label></th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Regional Service Manager</label></th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Parts Supervisor</label></th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}} colSpan={'3'}><label >Warranty Officer Rating</label></th>
             </tr>
             <tr>
