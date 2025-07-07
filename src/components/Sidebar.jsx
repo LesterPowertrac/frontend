@@ -164,9 +164,12 @@ export default function Sidebar() {
               <ListItemButton  onClick={() => navigate('/incentive_advisor')}>
                 <ListItemText primary="Incentive Advisor" sx={{ pl: 4,opacity: open ? 1 : 0  }} />
               </ListItemButton>
-              <ListItemButton  onClick={() => navigate('/Incentives_FleetAccount')}>
-                <ListItemText primary="Incentive Fleet Department" sx={{ pl: 4,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
-              </ListItemButton>              
+              <ListItemButton  onClick={() => navigate('/Incentives_FleetAdvisor')}>
+                <ListItemText primary="Fleet Advisor" sx={{ pl: 4,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
+              </ListItemButton>    
+              <ListItemButton  onClick={() => navigate('/Incentives_FleetTechnician')}>
+                <ListItemText primary="Fleet Technician" sx={{ pl: 4,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
+              </ListItemButton>           
             </List>
           </Collapse>
 

@@ -143,7 +143,7 @@ const Incentives_FleetAccount = () => {
         <br/> 
         <Grid container spacing={2} alignItems="center" justifyContent="space-between" id="printable-area-1" >
           <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
-            <h4 className={Styles.TextBlack}><b>INCENTIVE & EVALUATION FORM (FLEET DEPARTMENT)</b></h4>
+            <h4 className={Styles.TextBlack}><b>INCENTIVE & EVALUATION FORM (FLEET ADVISOR)</b></h4>
           </Grid>
           <Grid  xs={12} sm={4} sx={{ display: 'block', justifyContent: 'flex-end', alignItems: 'center' }}>
             <Box display="flex" alignItems="center">
@@ -607,7 +607,7 @@ const Incentives_FleetAccount = () => {
             <tbody id="printable-area-6">
               <tr>
                 <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Service Verifier</th>
-                <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Rgional Service Manager</th>
+                <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Regional Service Manager</th>
                 <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Parts Supervisor</th>
                 <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Service HR</th>
                 <th style={{padding: "0.5rem", border:' 1px solid #dddddd', textAlign: 'center'}}>Warranty Officer</th>
