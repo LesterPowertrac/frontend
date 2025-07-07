@@ -159,16 +159,31 @@ export default function Sidebar() {
           <Collapse in={openDropdown} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItemButton  onClick={() => navigate('/incentive_technician')}>
-                <ListItemText primary="Incentive Technician" sx={{ pl: 4,opacity: open ? 1 : 0  }}/>
+              <ListItemIcon sx={{ minWidth: 0, pl: 1, justifyContent: 'center', mr: open ? 0 : 'auto' }}>
+                <InboxIcon />
+              </ListItemIcon>
+                <ListItemText primary="Incentive Technician" sx={{ pl: 0,opacity: open ? 1 : 0  }}/>
               </ListItemButton>
+
               <ListItemButton  onClick={() => navigate('/incentive_advisor')}>
-                <ListItemText primary="Incentive Advisor" sx={{ pl: 4,opacity: open ? 1 : 0  }} />
+              <ListItemIcon sx={{ minWidth: 0, pl: 1, justifyContent: 'center', mr: open ? 0 : 'auto' }}>
+                <InboxIcon />
+              </ListItemIcon>
+                <ListItemText primary="Incentive Advisor" sx={{ pl: 0,opacity: open ? 1 : 0  }} />
               </ListItemButton>
+
               <ListItemButton  onClick={() => navigate('/Incentives_FleetAdvisor')}>
-                <ListItemText primary="Fleet Advisor" sx={{ pl: 4,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
-              </ListItemButton>    
+              <ListItemIcon sx={{ minWidth: 0, pl: 1, justifyContent: 'center', mr: open ? 0 : 'auto' }}>
+                <InboxIcon />
+              </ListItemIcon>
+                <ListItemText primary="Fleet Advisor" sx={{ pl: 0,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
+              </ListItemButton> 
+                 
               <ListItemButton  onClick={() => navigate('/Incentives_FleetTechnician')}>
-                <ListItemText primary="Fleet Technician" sx={{ pl: 4,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
+              <ListItemIcon sx={{ minWidth: 0, pl: 1, justifyContent: 'center', mr: open ? 0 : 'auto' }}>
+                <InboxIcon />
+              </ListItemIcon>
+                <ListItemText primary="Fleet Technician" sx={{ pl: 0,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
               </ListItemButton>           
             </List>
           </Collapse>
