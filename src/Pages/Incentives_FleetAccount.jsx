@@ -279,7 +279,7 @@ const Incentives_FleetAccount = () => {
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd',}} colSpan={'3'}><label htmlFor='date12'>Date:</label><input style={{width: '65%', marginLeft: '0.5rem'}} type="date" id="date12"/></td>
             </tr>
             <tr>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'4'}>Fleet Service Supervisor Name:<br/> 
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'4'}>Fleet Service Advisor Name:<br/> 
               {customerData ? (
                     <TextField
                       variant="outlined"
@@ -314,7 +314,7 @@ const Incentives_FleetAccount = () => {
                     />
                   )}
               </td>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Fleet Service Supervisor Name:<br/>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Fleet Service Advisor Name:<br/>
               {customerData ? (
                     <TextField
                       variant="outlined"
@@ -349,7 +349,7 @@ const Incentives_FleetAccount = () => {
                     />
                   )}
               </td>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Fleet Service Supervisor Name:<br/>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Fleet Service Advisor Name:<br/>
               {customerData ? (
                     <TextField
                       variant="outlined"
@@ -384,7 +384,7 @@ const Incentives_FleetAccount = () => {
                     />
                   )}
               </td>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Fleet Service Supervisor Name:<br/>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}} colSpan={'3'}>Fleet Service Advisor Name:<br/>
               {customerData ? (
                     <TextField
                       variant="outlined"
