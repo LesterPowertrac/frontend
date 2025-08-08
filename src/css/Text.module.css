@@ -1,0 +1,35 @@
+.TextBlue{
+    color: blue;
+}
+
+.InputMiddle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.TextBlack{
+    color: black;
+}
+
+.TextCenterInput input{
+    text-align: center;
+}
+
+.FullCenter{
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    height: 100%; /* Ensures full height of the td */
+}
+
+
+.TextUppcase input{
+    text-transform: uppercase;
+}
+
+.PositionLeft{
+    display: flex;
+    justify-content: end;
+    align-items: end;
+}
