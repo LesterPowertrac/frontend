@@ -523,7 +523,7 @@ return (
                       type="date"
                       id={`Dateofservice${row.id}`} // Unique id for each input
                       name={`Dateofservice${row.id}`} // Unique name for each input
-                      
+                      value={row.Dateofservice}
                       onChange={(e) => handleRowChange(row.id, 'Dateofservice', e.target.value)}
                     />
                   </TableCell>
