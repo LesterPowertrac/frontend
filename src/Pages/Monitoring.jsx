@@ -234,6 +234,7 @@ const handleClick = (event, id) => {
         { header: 'Location', key: 'Address', width: 50 },
         { header: 'Region', key: 'Region', width: 20 },
         { header: 'Unit/Model', key: 'Model', width: 50 },
+        { header: 'Manufacturer', key: 'Manufacturer', width: 50 },
         { header: 'VIN./ CHASSIS NO', key: 'Vinchassisno', width: 50 },
         { header: 'ENGINE NO', key: 'ROengineno', width: 50 },
         { header: 'SO CONCERN', key: 'Remarksnote', width: 50 },
@@ -290,6 +291,7 @@ const handleClick = (event, id) => {
         Dateofcompleted: '',
         Address: '',
         Model: '',
+        Manufacturer: '',
         Vinchassisno: '',
         ROengineno: '',
         Remarksnote: '',
@@ -320,6 +322,7 @@ const handleClick = (event, id) => {
         'Dateofcompleted',
         'Address',
         'Model',
+        'Manufacturer',
         'Vinchassisno',
         'ROengineno',
         'Remarksnote',
@@ -539,6 +542,7 @@ return (
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Address}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}></TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Model}</TableCell>
+                  <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Manufacturer}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Vinchassisno}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.ROengineno}</TableCell>
                   <TableCell id={labelId}  sx={{ borderRight: '1px solid #ccc' }}>{row.Remarksnote}</TableCell>
