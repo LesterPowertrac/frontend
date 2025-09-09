@@ -156,7 +156,7 @@ const [inputValue, setInputValue] = useState('');
       <div id="printable-area-1"> 
       <Grid container spacing={2} alignItems="center" justifyContent="space-between">
         <Grid  xs={12} sm={8} sx={{ display: 'flex' }}>
-          <h4><b>INCENTIVE & EVALUATION FORM (SERVICE TECHNICIAN)</b></h4>
+          <h4><b>INCENTIVE & EVALUATION FORM (FLEET TECHNICIAN)</b></h4>
         </Grid>
         <Grid  xs={12} sm={4} sx={{ display: 'block', justifyContent: 'flex-end', alignItems: 'center' }}>
           <Box display="flex" alignItems="center">
@@ -685,8 +685,8 @@ const [inputValue, setInputValue] = useState('');
           <tbody id="printable-area-6">
             <tr>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Advisor</th>
-              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Asst. Service Manager</th>
-              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Parts Manager</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Regional Service Manager</th>
+              <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Parts Supervisor</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service HR</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Service Verifier</th>
               <th style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Accounting</th>
@@ -729,8 +729,8 @@ const [inputValue, setInputValue] = useState('');
                   />
                 )}
               </td>
-              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Charlie</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Vivian</td>
+              <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Joven</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Rhea</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Angel/Shiela/Jennifer</td>
               <td style={{padding: "0.5rem", border:' 1px solid #dddddd'}}>Jeff</td>
