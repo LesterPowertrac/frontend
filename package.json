@@ -17,8 +17,8 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
+    "@tailwindcss/vite": "^4.1.14",
     "axios": "^1.7.2",
-    "bootstrap": "^5.3.3",
     "dom-to-image": "^2.6.0",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
@@ -26,12 +26,12 @@
     "jspdf": "^2.5.2",
     "lodash": "^4.17.21",
     "react": "^18.3.1",
-    "react-bootstrap": "^2.10.5",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
     "react-scripts": "^5.0.1",
+    "tailwindcss": "^4.1.14",
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {

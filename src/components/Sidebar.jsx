@@ -93,8 +93,8 @@ export default function Sidebar() {
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate("/Monitoring"); }}>
-            <ListItemButton sx={{ minHeight: 48, px: 2.5, justifyContent: open ? 'initial' : 'center' }}>
+          <ListItem disablePadding sx={{ display: 'block' }} onClick={() => { navigate("/Monitoring"); }} className='pr-10'>
+            <ListItemButton sx={{ minHeight: 48, px: 0, justifyContent: open ? 'initial' : 'center' }}>
               <ListItemText
                 primary={<Logo />}
                 sx={{ textAlign: 'center', opacity: open ? 1 : 0 }}
@@ -184,7 +184,14 @@ export default function Sidebar() {
                 <InboxIcon />
               </ListItemIcon>
                 <ListItemText primary="Fleet Technician" sx={{ pl: 0,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
-              </ListItemButton>           
+              </ListItemButton>  
+
+              <ListItemButton  onClick={() => navigate('/quarter-incentives')}>
+              <ListItemIcon sx={{ minWidth: 0, pl: 1, justifyContent: 'center', mr: open ? 0 : 'auto' }}>
+                <InboxIcon />
+              </ListItemIcon>
+                <ListItemText primary="Quarter Incentives" sx={{ pl: 0,opacity: open ? 1 : 0 }}  primaryTypographyProps={{ sx: { fontSize: '15px' } }} />
+              </ListItemButton>
             </List>
           </Collapse>
 

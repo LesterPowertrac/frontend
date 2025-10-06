@@ -23,6 +23,7 @@ import SOmonitoring from "../Pages/SOmonitoring";
 import RO_monitoring from "../Pages/RO_monitoring";
 import Incentives_FleetAccount from "../Pages/Incentives_FleetAccount";
 import Incentives_FleetTechnician from "../Pages/Incentives_FleetTechnician";
+import QuarterIncentives from "../Pages/QuarterIncentives";
 
 const Router = createHashRouter([
     {
@@ -124,6 +125,10 @@ const Router = createHashRouter([
             {
                 path: '/ro-monitoring',
                 element: <RO_monitoring/>
+            },
+            {
+                path: '/quarter-incentives',
+                element: <QuarterIncentives/>
             },
         ],
     },
