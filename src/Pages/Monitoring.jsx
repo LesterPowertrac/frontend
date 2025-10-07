@@ -48,10 +48,11 @@ const Monitoring = React.memo(() => {
       setPage(0); // Reset to first page
     };
 
-
     const formatDate = (dateString) => {
-      return dateString.split('T')[0]; // Extracts the date part from the ISO string
+      if (!dateString) return "";
+      return dateString.split('T')[0]; // Extracts the date part from ISO string
     };
+    
   
     // api
     const getApiUrl = useCallback(() => {
